@@ -2,10 +2,10 @@ const path = require("path");
 const upload = require("../src/services/upload");
 
 describe("Test Multer Configuration", () => {
-  const reqCollection = { params: { "type": "collections", "name": "Collection" } };
-  const reqSet = { params: { "type": "sets", "name": "Set", "id_collection": 1 } };
-  const reqCard = { params: { "type": "cards", "number": 1, "id_rarity": 1, "id_set": 1 } };
-  const reqAvatar = { params: { "type": "avatars", "name": "Avatar" } };
+  const reqCollection = { body: { "type": "collections", "name": "Collection" } };
+  const reqSet = { body: { "type": "sets", "name": "Set", "id_collection": 1 } };
+  const reqCard = { body: { "type": "cards", "number": 1, "id_rarity": 1, "id_set": 1 } };
+  const reqAvatar = { body: { "type": "avatars", "name": "Avatar" } };
   const file = { originalname: "test-image.png", mimetype: "image/png" };
 
   const cb = jest.fn();
@@ -48,14 +48,14 @@ describe("Test Multer Configuration", () => {
 
   it('should accept allowed mimetypes', () => {
     const fileFilter = upload.fileFilter;
-    fileFilter(req, file, cb);
+    fileFilter(reqCollection, file, cb);
     expect(cb).toHaveBeenCalledWith(null, true);
   });
 
   it('should reject unsupported mimetypes', () => {
     const fileFilter = upload.fileFilter;
     const invalidFile = { mimetype: 'application/pdf' };
-    fileFilter(req, invalidFile, cb);
+    fileFilter(reqCollection, invalidFile, cb);
     expect(cb).toHaveBeenCalledWith(new Error('Type de fichier non supporté. Seuls les JPEG et PNG sont autorisés.'));
   });
 });
