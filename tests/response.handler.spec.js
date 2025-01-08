@@ -5,7 +5,7 @@ describe("Test Response Handler", () => {
 
   beforeEach(() => {
     res = {
-      status: jest.fn(),
+      status: jest.fn().mockReturnThis(),
       json: jest.fn(),
     };
   });
