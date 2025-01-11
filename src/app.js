@@ -1,5 +1,5 @@
 const express = require("express");
-const { usersRouter } = require("./routes");
+const { usersRouter, rolesRouter, raritiesRouter } = require("./routes");
 
 const app = express();
 
@@ -12,5 +12,6 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use("/users", usersRouter);
 app.use("/roles", rolesRouter);
+app.use("/rarities", raritiesRouter);
 
 module.exports = app;
