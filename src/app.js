@@ -11,5 +11,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/users", usersRouter);
+app.use("/roles", rolesRouter);
 
 module.exports = app;
