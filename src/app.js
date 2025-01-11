@@ -1,11 +1,15 @@
 const express = require("express");
+const { usersRouter } = require("./routes");
+
 const app = express();
 
 // Disabling the “X-Powered-By” header for security reasons
 app.disable("x-powered-by");
 
-app.get("/", (req, res) => {
-  res.status(200).json({ message: "Bonjour Monde!" });
-});
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Routes
+app.use("/users", usersRouter);
 
 module.exports = app;
