@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
   // Set the destination folder based on the type
   destination: (req, file, cb) => {
     const { type } = req.body;
-    const uploadPath = path.join(process.cwd(), 'images', type);
+    const uploadPath = path.join(process.cwd(), 'public/images', type);
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {

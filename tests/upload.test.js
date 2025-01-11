@@ -17,10 +17,10 @@ describe("Test Multer Configuration", () => {
     destinationCallback(reqCard, file, cb);
     destinationCallback(reqAvatar, file, cb);
 
-    const expectedPathCollection = path.join(process.cwd(), "images", "collections");
-    const expectedPathSet = path.join(process.cwd(), "images", "sets");
-    const expectedPathCard = path.join(process.cwd(), "images", "cards");
-    const expectedPathAvatar = path.join(process.cwd(), "images", "avatars");
+    const expectedPathCollection = path.join(process.cwd(), "public/images", "collections");
+    const expectedPathSet = path.join(process.cwd(), "public/images", "sets");
+    const expectedPathCard = path.join(process.cwd(), "public/images", "cards");
+    const expectedPathAvatar = path.join(process.cwd(), "public/images", "avatars");
 
     expect(cb).toHaveBeenCalledWith(null, expectedPathCollection);
     expect(cb).toHaveBeenCalledWith(null, expectedPathSet);
