@@ -234,7 +234,7 @@ describe("Test Users Service", () => {
   });
 
   describe("deleteUser", () => {
-    it("should delete the user and return the deleted user", async () => {
+    it("should delete the user", async () => {
       const mockResult = { affectedRows: 1 };
 
       pool.execute.mockResolvedValue([mockResult]);
