@@ -21,21 +21,13 @@ const createCollection = async (collectionData) => {
 const updateCollection = async (id, collectionData) => {
   const query = "UPDATE Collections SET name = ? WHERE id_collection = ?";
   const [result] = await pool.execute(query, [collectionData.name, id]);
-  // Check the affected rows to determine if the collection was found
-  if (result.affectedRows === 0) {
-    return null;
-  }
-  return await getCollectionById(id);
+  return result.affectedRows > 0 ? await getCollectionById(id) : null; // Check if the collection was found
 }
 
 const deleteCollection = async (id) => {
   const query = "DELETE FROM Collections WHERE id_collection = ?";
   const [result] = await pool.execute(query, [id]);
-  // Check the affected rows to determine if the collection was found
-  if (result.affectedRows === 0) {
-    return null;
-  }
-  return true;
+  return result.affectedRows > 0 ? true : null; // Check if the collection was found
 }
 
 module.exports = {
