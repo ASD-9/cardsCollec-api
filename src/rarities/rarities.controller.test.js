@@ -1,7 +1,9 @@
 const rarityController = require("./rarities.controller");
 const raritiesService = require("./rarities.service");
+const responseHandler = require("../services/response.handler");
 
 jest.mock("./rarities.service"); // Mock the raritiesService
+jest.mock("../services/response.handler"); // Mock the response handler
 
 // Mock rarities data
 const mockRarity = {
@@ -21,16 +23,6 @@ const mockRarity2 = {
 };
 
 describe("Test Rarities Controller", () => {
-  let mockRes;
-
-  // Mock the response before each test
-  beforeEach(() => {
-    mockRes = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    };
-  });
-
   // Clear mocks after each test
   afterEach(() => {
     jest.clearAllMocks();
@@ -41,32 +33,20 @@ describe("Test Rarities Controller", () => {
       const mockRarities = [mockRarity, mockRarity2];
       raritiesService.getRarities.mockResolvedValue(mockRarities);
 
-      await rarityController.getRarities({}, mockRes);
+      await rarityController.getRarities({}, {});
 
       expect(raritiesService.getRarities).toHaveBeenCalled();
-      expect(mockRes.status).toHaveBeenCalledWith(200);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: true,
-        message: "Raretés récupérées avec succès",
-        data: mockRarities,
-        error: null
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 200, "Raretés récupérées avec succès", mockRarities);
     });
 
     it("should return an error with status 500", async () => {
       const mockError = new Error("Database error");
       raritiesService.getRarities.mockRejectedValue(mockError);
 
-      await rarityController.getRarities({}, mockRes);
+      await rarityController.getRarities({}, {});
 
       expect(raritiesService.getRarities).toHaveBeenCalled();
-      expect(mockRes.status).toHaveBeenCalledWith(500);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: false,
-        message: "Une erreur est survenue lors de la récupération des raretés",
-        data: null,
-        error: mockError
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 500, "Une erreur est survenue lors de la récupération des raretés", null, mockError);
     });
   });
 
@@ -76,16 +56,10 @@ describe("Test Rarities Controller", () => {
       const mockRarities = [mockRarity, mockRarity2];
       raritiesService.getRaritiesByCollection.mockResolvedValue(mockRarities);
 
-      await rarityController.getRaritiesByCollection(mockReq, mockRes);
+      await rarityController.getRaritiesByCollection(mockReq, {});
 
       expect(raritiesService.getRaritiesByCollection).toHaveBeenCalledWith(mockReq.params.idCollection);
-      expect(mockRes.status).toHaveBeenCalledWith(200);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: true,
-        message: "Raretés récupérées avec succès",
-        data: mockRarities,
-        error: null
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 200, "Raretés récupérées avec succès", mockRarities);
     });
 
     it("should return an error with status 500", async () => {
@@ -93,16 +67,10 @@ describe("Test Rarities Controller", () => {
       const mockError = new Error("Database error");
       raritiesService.getRaritiesByCollection.mockRejectedValue(mockError);
 
-      await rarityController.getRaritiesByCollection(mockReq, mockRes);
+      await rarityController.getRaritiesByCollection(mockReq, {});
 
       expect(raritiesService.getRaritiesByCollection).toHaveBeenCalledWith(mockReq.params.idCollection);
-      expect(mockRes.status).toHaveBeenCalledWith(500);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: false,
-        message: "Une erreur est survenue lors de la récupération des raretés",
-        data: null,
-        error: mockError
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 500, "Une erreur est survenue lors de la récupération des raretés", null, mockError);
     });
   });
 
@@ -111,16 +79,10 @@ describe("Test Rarities Controller", () => {
       const mockReq = { params: { id: 1 } };
       raritiesService.getRarityById.mockResolvedValue(mockRarity);
 
-      await rarityController.getRarityById(mockReq, mockRes);
+      await rarityController.getRarityById(mockReq, {});
 
       expect(raritiesService.getRarityById).toHaveBeenCalledWith(mockReq.params.id);
-      expect(mockRes.status).toHaveBeenCalledWith(200);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: true,
-        message: "Rareté récupérée avec succès",
-        data: mockRarity,
-        error: null
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 200, "Rareté récupérée avec succès", mockRarity);
     });
 
     it("should return an error with status 500", async () => {
@@ -128,16 +90,10 @@ describe("Test Rarities Controller", () => {
       const mockError = new Error("Database error");
       raritiesService.getRarityById.mockRejectedValue(mockError);
 
-      await rarityController.getRarityById(mockReq, mockRes);
+      await rarityController.getRarityById(mockReq, {});
 
       expect(raritiesService.getRarityById).toHaveBeenCalledWith(mockReq.params.id);
-      expect(mockRes.status).toHaveBeenCalledWith(500);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: false,
-        message: "Une erreur est survenue lors de la récupération de la rareté",
-        data: null,
-        error: mockError
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 500, "Une erreur est survenue lors de la récupération de la rareté", null, mockError);
     });
   });
 
@@ -151,16 +107,10 @@ describe("Test Rarities Controller", () => {
       }};
       raritiesService.createRarity.mockResolvedValue(mockRarity);
 
-      await rarityController.createRarity(mockReq, mockRes);
+      await rarityController.createRarity(mockReq, {});
 
       expect(raritiesService.createRarity).toHaveBeenCalledWith(mockReq.body);
-      expect(mockRes.status).toHaveBeenCalledWith(201);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: true,
-        message: "Rareté créée avec succès",
-        data: mockRarity,
-        error: null
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 201, "Rareté créée avec succès", mockRarity);
     });
 
     it("should return an error with status 500", async () => {
@@ -173,16 +123,10 @@ describe("Test Rarities Controller", () => {
       const mockError = new Error("Database error");
       raritiesService.createRarity.mockRejectedValue(mockError);
 
-      await rarityController.createRarity(mockReq, mockRes);
+      await rarityController.createRarity(mockReq, {});
 
       expect(raritiesService.createRarity).toHaveBeenCalledWith(mockReq.body);
-      expect(mockRes.status).toHaveBeenCalledWith(500);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: false,
-        message: "Une erreur est survenue lors de la création de la rareté",
-        data: null,
-        error: mockError
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 500, "Une erreur est survenue lors de la création de la rareté", null, mockError);
     });
   });
 
@@ -194,30 +138,19 @@ describe("Test Rarities Controller", () => {
       }};
       raritiesService.updateRarity.mockResolvedValue(mockRarity);
 
-      await rarityController.updateRarity(mockReq, mockRes);
+      await rarityController.updateRarity(mockReq, {});
 
       expect(raritiesService.updateRarity).toHaveBeenCalledWith(mockReq.params.id, mockReq.body);
-      expect(mockRes.status).toHaveBeenCalledWith(200);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: true,
-        message: "Rareté mise à jour avec succès",
-        data: mockRarity,
-        error: null
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 200, "Rareté mise à jour avec succès", mockRarity);
     });
 
     it("should return an error with status 400 if no data provided", async () => {
       const mockReq = { params: { id: 1 } };
 
-      await rarityController.updateRarity(mockReq, mockRes);
+      await rarityController.updateRarity(mockReq, {});
 
-      expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: false,
-        message: "Données manquantes",
-        data: null,
-        error: null
-      });
+      expect(raritiesService.updateRarity).not.toHaveBeenCalled();
+      expect(responseHandler).toHaveBeenCalledWith({}, 400, "Données manquantes");
     });
 
     it("should return an error with status 404 if rarity not found", async () => {
@@ -227,16 +160,10 @@ describe("Test Rarities Controller", () => {
       }};
       raritiesService.updateRarity.mockResolvedValue(null);
 
-      await rarityController.updateRarity(mockReq, mockRes);
+      await rarityController.updateRarity(mockReq, {});
 
       expect(raritiesService.updateRarity).toHaveBeenCalledWith(mockReq.params.id, mockReq.body);
-      expect(mockRes.status).toHaveBeenCalledWith(404);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: false,
-        message: "Rareté non trouvée",
-        data: null,
-        error: null
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 404, "Rareté non trouvée");
     });
 
     it("should return an error with status 500", async () => {
@@ -247,50 +174,32 @@ describe("Test Rarities Controller", () => {
       const mockError = new Error("Database error");
       raritiesService.updateRarity.mockRejectedValue(mockError);
 
-      await rarityController.updateRarity(mockReq, mockRes);
+      await rarityController.updateRarity(mockReq, {});
 
       expect(raritiesService.updateRarity).toHaveBeenCalledWith(mockReq.params.id, mockReq.body);
-      expect(mockRes.status).toHaveBeenCalledWith(500);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: false,
-        message: "Une erreur est survenue lors de la mise à jour de la rareté",
-        data: null,
-        error: mockError
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 500, "Une erreur est survenue lors de la mise à jour de la rareté", null, mockError);
     });
   });
 
   describe("deleteRarity", () => {
-    it("should return the deleted rarity with status 200", async () => {
+    it("should status 200", async () => {
       const mockReq = { params: { id: 1 }};
       raritiesService.deleteRarity.mockResolvedValue(mockRarity);
 
-      await rarityController.deleteRarity(mockReq, mockRes);  
+      await rarityController.deleteRarity(mockReq, {});  
 
       expect(raritiesService.deleteRarity).toHaveBeenCalledWith(mockReq.params.id); 
-      expect(mockRes.status).toHaveBeenCalledWith(200);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: true,
-        message: "Rareté supprimée avec succès",
-        data: null,
-        error: null
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 200, "Rareté supprimée avec succès");
     });
 
     it("should return an error with status 404 if rarity not found", async () => {
       const mockReq = { params: { id: 99 }};
       raritiesService.deleteRarity.mockResolvedValue(null);
 
-      await rarityController.deleteRarity(mockReq, mockRes);
+      await rarityController.deleteRarity(mockReq, {});
 
       expect(raritiesService.deleteRarity).toHaveBeenCalledWith(mockReq.params.id);
-      expect(mockRes.status).toHaveBeenCalledWith(404);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: false,
-        message: "Rareté non trouvée",
-        data: null,
-        error: null
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 404, "Rareté non trouvée");
     });
 
     it("should return an error with status 500", async () => {
@@ -298,16 +207,10 @@ describe("Test Rarities Controller", () => {
       const mockError = new Error("Database error");
       raritiesService.deleteRarity.mockRejectedValue(mockError);
 
-      await rarityController.deleteRarity(mockReq, mockRes);
+      await rarityController.deleteRarity(mockReq, {});
 
       expect(raritiesService.deleteRarity).toHaveBeenCalledWith(mockReq.params.id);
-      expect(mockRes.status).toHaveBeenCalledWith(500);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: false,
-        message: "Une erreur est survenue lors de la suppression de la rareté",
-        data: null,
-        error: mockError
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 500, "Une erreur est survenue lors de la suppression de la rareté", null, mockError);
     });
   });
 });
