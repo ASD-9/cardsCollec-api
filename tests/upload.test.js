@@ -27,6 +27,7 @@ describe("Test upload middleware", () => {
   it("should call next if image is uploaded", () => {
     upload.single = jest.fn(() => (req, res, next) => {
       req.file = { filename: "test.png" };
+      req.body.type = "collections";
       next();
     });
 
@@ -34,8 +35,7 @@ describe("Test upload middleware", () => {
 
     expect(next).toHaveBeenCalled();
     expect(upload.single).toHaveBeenCalledWith("image");
-    expect(req.body.type).toBe("collections");
-    expect(req.body.image).toEqual(path.join("public/images", req.body.type, req.file.filename));
+    expect(req.body.image_path).toEqual(path.join("public/images", req.body.type, req.file.filename));
   });
 
   it("should call responseHandler with error 400 if no image is uploaded", () => {

@@ -4,8 +4,6 @@ const upload = require("../services/multer.config");
 const responseHandler = require("../services/response.handler");
 
 const handleImageUpload = (req, res, next) => {
-  // Extract the type from the URL and store it in req.body to use it later to select the correct folder
-  req.body.type = req.baseUrl.split("/")[1];
   const uploadSingle = upload.single("image");
 
   uploadSingle(req, res, (err) => {
@@ -26,7 +24,7 @@ const handleImageUpload = (req, res, next) => {
     }
 
     // Add the image path to req.body to use it later to save it in the database
-    req.body.image = path.join("public/images", req.body.type, req.file.filename);
+    req.body.image_path = path.join("public/images", req.body.type, req.file.filename);
     next();
   });
 }

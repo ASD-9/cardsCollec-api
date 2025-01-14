@@ -2,10 +2,10 @@ const path = require("path");
 const upload = require("../src/services/multer.config");
 
 describe("Test Multer Configuration", () => {
-  const reqCollection = { body: { "type": "collections", "name": "Collection" } };
-  const reqSet = { body: { "type": "sets", "name": "Set", "id_collection": 1 } };
-  const reqCard = { body: { "type": "cards", "number": 1, "id_rarity": 1, "id_set": 1 } };
-  const reqAvatar = { body: { "type": "avatars", "name": "Avatar" } };
+  const reqCollection = { body: { "name": "Collection" }, baseUrl: "/collections" };
+  const reqSet = { body: { "name": "Set", "id_collection": 1 }, baseUrl: "/sets" };
+  const reqCard = { body: { "number": 1, "id_rarity": 1, "id_set": 1 }, baseUrl: "/cards" };
+  const reqAvatar = { body: { "name": "Avatar" }, baseUrl: "/avatars" };
   const file = { originalname: "test-image.png", mimetype: "image/png" };
 
   const cb = jest.fn();
