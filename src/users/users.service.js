@@ -63,21 +63,13 @@ const updateUser = async (id, userData) => {
   const query = `UPDATE Users SET ${updates} WHERE id_user = ?`;
 
   const [result] = await pool.execute(query, values);
-  // Check the affected rows to determine if the user was found
-  if (result.affectedRows === 0) {
-    return null;
-  }
-  return await getUserById(id);
+  return result.affectedRows > 0 ? await getUserById(id) : null; // Check if the user was found
 }
 
 const deleteUser = async (id) => {
   const query = `DELETE FROM Users WHERE id_user = ?`;
   const [result] = await pool.execute(query, [id]);
-  // Check the affected rows to determine if the user was found
-  if (result.affectedRows === 0) {
-    return null;
-  }
-  return true;
+  return result.affectedRows > 0 ? true : null; // Check if the user was found
 }
 
 module.exports = {

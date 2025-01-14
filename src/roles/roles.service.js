@@ -21,21 +21,13 @@ const createRole = async (roleData) => {
 const updateRole = async (id, roleData) => {
   const query = "UPDATE Roles SET name = ? WHERE id_role = ?";
   const [result] = await pool.execute(query, [roleData.name, id]);
-  // Check the affected rows to determine if the role was found
-  if (result.affectedRows === 0) {
-    return null;
-  }
-  return { id_role: id, ...roleData };
+  return result.affectedRows > 0 ? { id_role: id, ...roleData } : null; // Check if the role was found
 }
 
 const deleteRole = async (id) => {
   const query = "DELETE FROM Roles WHERE id_role = ?";
   const [result] = await pool.execute(query, [id]);
-  // Check the affected rows to determine if the role was found
-  if (result.affectedRows === 0) {
-    return null;
-  }
-  return true;
+  return result.affectedRows > 0 ? true : null; // Check if the role was found
 }
 
 module.exports = {

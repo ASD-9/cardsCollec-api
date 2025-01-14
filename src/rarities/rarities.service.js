@@ -33,21 +33,13 @@ const updateRarity = async (id, rarityData) => {
   const query = `UPDATE Rarities SET ${updates} WHERE id_rarity = ?`;
 
   const [result] = await pool.execute(query, values);
-  // Check the affected rows to determine if the rarity was found
-  if (result.affectedRows === 0) {
-    return null;
-  }
-  return await getRarityById(id);
+  return result.affectedRows > 0 ? await getRarityById(id) : null; // Check if the rarity was found
 }
 
 const deleteRarity = async (id) => {
   const query = "DELETE FROM Rarities WHERE id_rarity = ?";
   const [result] = await pool.execute(query, [id]);
-  // Check the affected rows to determine if the rarity was found
-  if (result.affectedRows === 0) {
-    return null;
-  }
-  return true;
+  return result.affectedRows > 0 ? true : null; // Check if the rarity was found
 }
 
 module.exports = {

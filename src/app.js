@@ -1,5 +1,5 @@
 const express = require("express");
-const { usersRouter, rolesRouter, raritiesRouter, avatarsRouter, collectionsRouter } = require("./routes");
+const { usersRouter, rolesRouter, raritiesRouter, avatarsRouter, collectionsRouter, setsRouter } = require("./routes");
 const upload = require("./services/multer.config");
 
 const app = express();
@@ -18,6 +18,7 @@ app.use("/users", usersRouter);
 app.use("/roles", rolesRouter);
 app.use("/rarities", raritiesRouter);
 app.use("/avatars", avatarsRouter);
-app.use("/collections", collectionsRouter)
+app.use("/collections", collectionsRouter);
+app.use("/sets", setsRouter);
 
 module.exports = app;

@@ -21,21 +21,13 @@ const createAvatar = async (avatarData) => {
 const updateAvatar = async (id, avatarData) => {
   const query = "UPDATE Avatars SET name = ? WHERE id_avatar = ?";
   const [result] = await pool.execute(query, [avatarData.name, id]);
-  // Check the affected rows to determine if the avatar was found
-  if (result.affectedRows === 0) {
-    return null;
-  }
-  return await getAvatarById(id);
+  return result.affectedRows > 0 ? await getAvatarById(id) : null; // Check if the avatar was found
 }
 
 const deleteAvatar = async (id) => {
   const query = "DELETE FROM Avatars WHERE id_avatar = ?";
   const [result] = await pool.execute(query, [id]);
-  // Check the affected rows to determine if the avatar was found
-  if (result.affectedRows === 0) {
-    return null;
-  }
-  return true;
+  return result.affectedRows > 0 ? true : null; // Check if the avatar was found
 }
 
 module.exports = {
