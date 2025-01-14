@@ -194,7 +194,7 @@ describe("Test Rarities Controller", () => {
   describe("deleteRarity", () => {
     it("should return status 200", async () => {
       const mockReq = { params: { id: 1 }};
-      raritiesService.deleteRarity.mockResolvedValue(mockRarity);
+      raritiesService.deleteRarity.mockResolvedValue(true);
 
       await rarityController.deleteRarity(mockReq, {});  
 

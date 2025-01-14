@@ -146,7 +146,7 @@ describe("Test Avatars Controller", () => {
   describe("deleteAvatar", () => {
     it("should return status 200", async () => {
       const mockReq = { params: { id: 1 } };
-      avatarsService.deleteAvatar.mockResolvedValue(mockAvatar);
+      avatarsService.deleteAvatar.mockResolvedValue(true);
 
       await avatarsController.deleteAvatar(mockReq, {});
 
