@@ -5,19 +5,21 @@ const path = require('path');
 const generateFilename = (req) => {
   const { type } = req.body;
   if (type === 'collections') {
-    return req.body.name;
+    return req.body.name.replace(/\s+/g, '-');
   } else if (type === 'sets') {
-    return `${req.body.id_collection}-${req.body.name}`;
+    return `${req.body.id_collection}-${req.body.name.replace(/\s+/g, '-')}`;
   } else if (type === 'cards') {
     return `${req.body.id_set}-${req.body.id_rarity}-${req.body.number}`;
   } else if (type === 'avatars') {
-    return req.body.name;
+    return req.body.name.replace(/\s+/g, '-');
   }
 }
 
 const storage = multer.diskStorage({
   // Set the destination folder based on the type
   destination: (req, file, cb) => {
+    // Extract the type from the URL and store it in req.body to use it later to select the correct folder
+    req.body.type = req.baseUrl.split("/")[1];
     const { type } = req.body;
     const uploadPath = path.join(process.cwd(), 'public/images', type);
     cb(null, uploadPath);

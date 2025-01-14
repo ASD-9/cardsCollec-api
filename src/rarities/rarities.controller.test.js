@@ -85,6 +85,16 @@ describe("Test Rarities Controller", () => {
       expect(responseHandler).toHaveBeenCalledWith({}, 200, "Rareté récupérée avec succès", mockRarity);
     });
 
+    it("should return an error with status 404 if rarity not found", async () => {
+      const mockReq = { params: { id: 99 } };
+      raritiesService.getRarityById.mockResolvedValue(null);
+
+      await rarityController.getRarityById(mockReq, {});
+
+      expect(raritiesService.getRarityById).toHaveBeenCalledWith(mockReq.params.id);
+      expect(responseHandler).toHaveBeenCalledWith({}, 404, "Rareté non trouvée");
+    });
+
     it("should return an error with status 500", async () => {
       const mockReq = { params: { id: 1 } };
       const mockError = new Error("Database error");
@@ -182,7 +192,7 @@ describe("Test Rarities Controller", () => {
   });
 
   describe("deleteRarity", () => {
-    it("should status 200", async () => {
+    it("should return status 200", async () => {
       const mockReq = { params: { id: 1 }};
       raritiesService.deleteRarity.mockResolvedValue(mockRarity);
 
