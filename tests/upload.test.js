@@ -1,61 +1,86 @@
+const handleImageUpload = require("../src/middlewares/upload");
+const upload = require("../src/services/multer.config");
+const responseHandler = require("../src/services/response.handler");
 const path = require("path");
-const upload = require("../src/services/upload");
+const multer = require("multer");
 
-describe("Test Multer Configuration", () => {
-  const reqCollection = { body: { "type": "collections", "name": "Collection" } };
-  const reqSet = { body: { "type": "sets", "name": "Set", "id_collection": 1 } };
-  const reqCard = { body: { "type": "cards", "number": 1, "id_rarity": 1, "id_set": 1 } };
-  const reqAvatar = { body: { "type": "avatars", "name": "Avatar" } };
-  const file = { originalname: "test-image.png", mimetype: "image/png" };
+jest.mock("../src/services/multer.config"); // Mock the multer configuration
+jest.mock("../src/services/response.handler"); // Mock the response handler
 
-  const cb = jest.fn();
+describe("Test upload middleware", () => {
+  let req, next;
 
-  it("should select the correct upload storage based on the type", () => {
-    const destinationCallback = upload.storage.getDestination;
-    destinationCallback(reqCollection, file, cb);
-    destinationCallback(reqSet, file, cb);
-    destinationCallback(reqCard, file, cb);
-    destinationCallback(reqAvatar, file, cb);
-
-    const expectedPathCollection = path.join(process.cwd(), "public/images", "collections");
-    const expectedPathSet = path.join(process.cwd(), "public/images", "sets");
-    const expectedPathCard = path.join(process.cwd(), "public/images", "cards");
-    const expectedPathAvatar = path.join(process.cwd(), "public/images", "avatars");
-
-    expect(cb).toHaveBeenCalledWith(null, expectedPathCollection);
-    expect(cb).toHaveBeenCalledWith(null, expectedPathSet);
-    expect(cb).toHaveBeenCalledWith(null, expectedPathCard);
-    expect(cb).toHaveBeenCalledWith(null, expectedPathAvatar);
+  // Set up mocks before each test
+  beforeEach(() => {
+    req = {
+      baseUrl: "/collections",
+      body: {}
+    };
+    next = jest.fn();
   });
 
-  it("should generate the correct filename", () => {
-    const filenameCallback = upload.storage.getFilename;
-    filenameCallback(reqCollection, file, cb);
-    filenameCallback(reqSet, file, cb);
-    filenameCallback(reqCard, file, cb);
-    filenameCallback(reqAvatar, file, cb);
-
-    const expectedFilenameCollection = "Collection.png";
-    const expectedFilenameSet = "1-Set.png";
-    const expectedFilenameCard = "1-1-1.png";
-    const expectedFilenameAvatar = "Avatar.png";
-
-    expect(cb).toHaveBeenCalledWith(null, expectedFilenameCollection);
-    expect(cb).toHaveBeenCalledWith(null, expectedFilenameSet);
-    expect(cb).toHaveBeenCalledWith(null, expectedFilenameCard);
-    expect(cb).toHaveBeenCalledWith(null, expectedFilenameAvatar);
+  // Clear mocks after each test
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('should accept allowed mimetypes', () => {
-    const fileFilter = upload.fileFilter;
-    fileFilter(reqCollection, file, cb);
-    expect(cb).toHaveBeenCalledWith(null, true);
+  it("should call next if image is uploaded", () => {
+    upload.single = jest.fn(() => (req, res, next) => {
+      req.file = { filename: "test.png" };
+      next();
+    });
+
+    handleImageUpload(req, {}, next);
+
+    expect(next).toHaveBeenCalled();
+    expect(upload.single).toHaveBeenCalledWith("image");
+    expect(req.body.type).toBe("collections");
+    expect(req.body.image).toEqual(path.join("public/images", req.body.type, req.file.filename));
   });
 
-  it('should reject unsupported mimetypes', () => {
-    const fileFilter = upload.fileFilter;
-    const invalidFile = { mimetype: 'application/pdf' };
-    fileFilter(reqCollection, invalidFile, cb);
-    expect(cb).toHaveBeenCalledWith(new Error('Type de fichier non supporté. Seuls les JPEG et PNG sont autorisés.'));
+  it("should call responseHandler with error 400 if no image is uploaded", () => {
+    upload.single = jest.fn(() => (req, res, next) => next());
+
+    handleImageUpload(req, {}, next);
+
+    expect(next).not.toHaveBeenCalled();
+    expect(upload.single).toHaveBeenCalledWith("image");
+    expect(responseHandler).toHaveBeenCalledWith({}, 400, "Aucun fichier envoyé.", null, "Aucun fichier envoyé.");
+  });
+
+  it("should call responseHandler with error 400 if image size is too large", () => {
+    const multerError = new multer.MulterError("LIMIT_FILE_SIZE");
+
+    upload.single = jest.fn(() => (req, res, next) => next(multerError));
+
+    handleImageUpload(req, {}, next);
+
+    expect(next).not.toHaveBeenCalled();
+    expect(upload.single).toHaveBeenCalledWith("image");
+    expect(responseHandler).toHaveBeenCalledWith({}, 400, "Le fichier dépasse la taille maximale autorisée (5 Mo).", null, multerError);
+  });
+
+  it("should call responseHandler with error 500 if image upload fails", () => {
+    const error = new Error("Image upload failed");
+
+    upload.single = jest.fn(() => (req, res, next) => next(error));
+
+    handleImageUpload(req, {}, next);
+
+    expect(next).not.toHaveBeenCalled();
+    expect(upload.single).toHaveBeenCalledWith("image");
+    expect(responseHandler).toHaveBeenCalledWith({}, 500, "Erreur serveur lors de l'upload.", null, error);
+  });
+
+  it("should call responseHandler with error 400 if image upload fails with multer error", () => {
+    const multerError = new multer.MulterError();
+
+    upload.single = jest.fn(() => (req, res, next) => next(multerError));
+
+    handleImageUpload(req, {}, next);
+
+    expect(next).not.toHaveBeenCalled();
+    expect(upload.single).toHaveBeenCalledWith("image");
+    expect(responseHandler).toHaveBeenCalledWith({}, 400, "Erreur lors de l'upload.", null, multerError);
   });
 });
