@@ -1,7 +1,9 @@
 const usersController = require("./users.controller");
 const usersService = require("./users.service");
+const responseHandler = require("../services/response.handler");
 
 jest.mock("./users.service"); // Mock the usersService
+jest.mock("../services/response.handler"); // Mock the response handler
 
 // Mock users data
 const mockUser = {
@@ -33,15 +35,6 @@ const mockUser2 = {
 };
 
 describe("Test Users Controller", () => {
-  let mockRes;
-
-  // Mock the response before each test
-  beforeEach(() => {
-    mockRes = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    };
-  });
 
   // Clear mocks after each test
   afterEach(() => {
@@ -53,32 +46,20 @@ describe("Test Users Controller", () => {
       const mockUsers = [mockUser, mockUser2];
       usersService.getUsers.mockResolvedValue(mockUsers);
 
-      await usersController.getUsers({}, mockRes);
+      await usersController.getUsers({}, {});
 
       expect(usersService.getUsers).toHaveBeenCalled();
-      expect(mockRes.status).toHaveBeenCalledWith(200);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: true,
-        message: "Utilisateurs récupérés avec succès",
-        data: [mockUser, mockUser2],
-        error: null
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 200, "Utilisateurs récupérés avec succès", mockUsers);
     });
 
     it("should return an error with status 500", async () => {
       const mockError = new Error("Database error");
       usersService.getUsers.mockRejectedValue(mockError);
 
-      await usersController.getUsers({}, mockRes);
+      await usersController.getUsers({}, {});
 
       expect(usersService.getUsers).toHaveBeenCalled();
-      expect(mockRes.status).toHaveBeenCalledWith(500);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: false,
-        message: "Une erreur est survenue lors de la récupération des utilisateurs",
-        data: null,
-        error: Error("Database error")
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 500, "Une erreur est survenue lors de la récupération des utilisateurs", null, Error("Database error"));
     });
   });
 
@@ -87,32 +68,20 @@ describe("Test Users Controller", () => {
       const mockReq = { params: { id: 1 } };
       usersService.getUserById.mockResolvedValue(mockUser);
 
-      await usersController.getUserById(mockReq, mockRes);
+      await usersController.getUserById(mockReq, {});
 
       expect(usersService.getUserById).toHaveBeenCalledWith(1);
-      expect(mockRes.status).toHaveBeenCalledWith(200);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: true,
-        message: "Utilisateur récupéré avec succès",
-        data: mockUser,
-        error: null
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 200, "Utilisateur récupéré avec succès", mockUser);
     });
 
     it("should return an error with status 404 if user is not found", async () => {
       const mockReq = { params: { id: 99 } };
       usersService.getUserById.mockResolvedValue(null);
 
-      await usersController.getUserById(mockReq, mockRes);
+      await usersController.getUserById(mockReq, {});
 
       expect(usersService.getUserById).toHaveBeenCalledWith(99);
-      expect(mockRes.status).toHaveBeenCalledWith(404);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: false,
-        message: "Utilisateur non trouvé",
-        data: null,
-        error: null
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 404, "Utilisateur non trouvé");
     });
 
     it("should return an error with status 500", async () => {
@@ -120,16 +89,10 @@ describe("Test Users Controller", () => {
       const mockError = new Error("Database error");
       usersService.getUserById.mockRejectedValue(mockError);
 
-      await usersController.getUserById(mockReq, mockRes);
+      await usersController.getUserById(mockReq, {});
 
       expect(usersService.getUserById).toHaveBeenCalledWith(1);
-      expect(mockRes.status).toHaveBeenCalledWith(500);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: false,
-        message: "Une erreur est survenue lors de la récupération de l'utilisateur",
-        data: null,
-        error: Error("Database error")
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 500, "Une erreur est survenue lors de la récupération de l'utilisateur", null, Error("Database error"));
     });
   });
 
@@ -143,16 +106,10 @@ describe("Test Users Controller", () => {
       }};
       usersService.createUser.mockResolvedValue(mockUser);
 
-      await usersController.createUser(mockReq, mockRes);
+      await usersController.createUser(mockReq, {});
 
       expect(usersService.createUser).toHaveBeenCalledWith(mockReq.body);
-      expect(mockRes.status).toHaveBeenCalledWith(201);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: true,
-        message: "Utilisateur créé avec succès",
-        data: mockUser,
-        error: null
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 201, "Utilisateur créé avec succès", mockUser);
     });
 
     it("should return an error with status 500", async () => {
@@ -165,16 +122,10 @@ describe("Test Users Controller", () => {
       const mockError = new Error("Database error");
       usersService.createUser.mockRejectedValue(mockError);
 
-      await usersController.createUser(mockReq, mockRes);
+      await usersController.createUser(mockReq, {});
 
       expect(usersService.createUser).toHaveBeenCalledWith(mockReq.body);
-      expect(mockRes.status).toHaveBeenCalledWith(500);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: false,
-        message: "Une erreur est survenue lors de la création de l'utilisateur",
-        data: null,
-        error: Error("Database error")
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 500, "Une erreur est survenue lors de la création de l'utilisateur", null, Error("Database error"));
     });
   });
 
@@ -186,30 +137,19 @@ describe("Test Users Controller", () => {
       }};
       usersService.updateUser.mockResolvedValue(mockUser);
 
-      await usersController.updateUser(mockReq, mockRes);
+      await usersController.updateUser(mockReq, {});
 
       expect(usersService.updateUser).toHaveBeenCalledWith(mockReq.params.id, mockReq.body);
-      expect(mockRes.status).toHaveBeenCalledWith(200);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: true,
-        message: "Utilisateur mis à jour avec succès",
-        data: mockUser,
-        error: null
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 200, "Utilisateur mis à jour avec succès", mockUser);
     });
 
     it("should return an error with status 400 if no data provided", async () => {
       const mockReq = { params: { id: 1 } };
 
-      await usersController.updateUser(mockReq, mockRes);
+      await usersController.updateUser(mockReq, {});
 
-      expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: false,
-        message: "Données manquantes",
-        data: null,
-        error: null
-      });
+      expect(usersService.updateUser).not.toHaveBeenCalled();
+      expect(responseHandler).toHaveBeenCalledWith({}, 400, "Données manquantes");
     });
 
     it("should return an error with status 404 if user is not found", async () => {
@@ -219,16 +159,10 @@ describe("Test Users Controller", () => {
       }};
       usersService.updateUser.mockResolvedValue(null);
 
-      await usersController.updateUser(mockReq, mockRes);
+      await usersController.updateUser(mockReq, {});
 
       expect(usersService.updateUser).toHaveBeenCalledWith(mockReq.params.id, mockReq.body);
-      expect(mockRes.status).toHaveBeenCalledWith(404);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: false,
-        message: "Utilisateur non trouvé",
-        data: null,
-        error: null
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 404, "Utilisateur non trouvé");
     });
 
     it("should return an error with status 500", async () => {
@@ -239,16 +173,10 @@ describe("Test Users Controller", () => {
       const mockError = new Error("Database error");
       usersService.updateUser.mockRejectedValue(mockError);
 
-      await usersController.updateUser(mockReq, mockRes);
+      await usersController.updateUser(mockReq, {});
 
       expect(usersService.updateUser).toHaveBeenCalledWith(mockReq.params.id, mockReq.body);
-      expect(mockRes.status).toHaveBeenCalledWith(500);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: false,
-        message: "Une erreur est survenue lors de la mise à jour de l'utilisateur",
-        data: null,
-        error: Error("Database error")
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 500, "Une erreur est survenue lors de la mise à jour de l'utilisateur", null, Error("Database error"));
     });
   });
 
@@ -257,32 +185,20 @@ describe("Test Users Controller", () => {
       const mockReq = { params: { id: 1 } };
       usersService.deleteUser.mockResolvedValue(true);
 
-      await usersController.deleteUser(mockReq, mockRes);
+      await usersController.deleteUser(mockReq, {});
 
       expect(usersService.deleteUser).toHaveBeenCalledWith(mockReq.params.id);
-      expect(mockRes.status).toHaveBeenCalledWith(200);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: true,
-        message: "Utilisateur supprimé avec succès",
-        data: null,
-        error: null
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 200, "Utilisateur supprimé avec succès");
     });
 
     it("should return an error with status 404 if user is not found", async () => {
       const mockReq = { params: { id: 99 } };
       usersService.deleteUser.mockResolvedValue(null);
 
-      await usersController.deleteUser(mockReq, mockRes);
+      await usersController.deleteUser(mockReq, {});
 
       expect(usersService.deleteUser).toHaveBeenCalledWith(mockReq.params.id);
-      expect(mockRes.status).toHaveBeenCalledWith(404);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: false,
-        message: "Utilisateur non trouvé",
-        data: null,
-        error: null
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 404, "Utilisateur non trouvé");
     });
 
     it("should return an error with status 500", async () => {
@@ -290,16 +206,10 @@ describe("Test Users Controller", () => {
       const mockError = new Error("Database error");
       usersService.deleteUser.mockRejectedValue(mockError);
 
-      await usersController.deleteUser(mockReq, mockRes);
+      await usersController.deleteUser(mockReq, {});
 
       expect(usersService.deleteUser).toHaveBeenCalledWith(mockReq.params.id);
-      expect(mockRes.status).toHaveBeenCalledWith(500);
-      expect(mockRes.json).toHaveBeenCalledWith({
-        success: false,
-        message: "Une erreur est survenue lors de la suppression de l'utilisateur",
-        data: null,
-        error: Error("Database error")
-      });
+      expect(responseHandler).toHaveBeenCalledWith({}, 500, "Une erreur est survenue lors de la suppression de l'utilisateur", null, Error("Database error"));
     });
-  })
+  });
 });
