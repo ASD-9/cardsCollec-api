@@ -133,22 +133,22 @@ describe("Test Rarities Service", () => {
       const mockResult = { affectedRows: 1 };
       pool.execute.mockResolvedValue([mockResult]);
 
-      const deletedRarity = await raritiesService.deleteRarity(1);
+      const result = await raritiesService.deleteRarity(1);
       const query = "DELETE FROM Rarities WHERE id_rarity = ?";
 
       expect(pool.execute).toHaveBeenCalledWith(query, [1]);
-      expect(deletedRarity).toEqual(true);
+      expect(result).toEqual(true);
     });
 
     it("should return null if the rarity is not found", async () => {
       const mockResult = { affectedRows: 0 };
       pool.execute.mockResolvedValue([mockResult]);
 
-      const deletedRarity = await raritiesService.deleteRarity(99);
+      const result = await raritiesService.deleteRarity(99);
       const query = "DELETE FROM Rarities WHERE id_rarity = ?";
 
       expect(pool.execute).toHaveBeenCalledWith(query, [99]);
-      expect(deletedRarity).toBeNull();
+      expect(result).toBeNull();
     });
   });
 });
