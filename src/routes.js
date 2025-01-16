@@ -4,6 +4,7 @@ const raritiesRouter = require("./rarities/rarities.router");
 const avatarsRouter = require("./avatars/avatars.router");
 const collectionsRouter = require("./collections/collections.router");
 const setsRouter = require("./sets/sets.router");
+const cardsRouter = require("./cards/cards.router");
 
 module.exports = {
   usersRouter,
@@ -11,5 +12,6 @@ module.exports = {
   raritiesRouter,
   avatarsRouter,
   collectionsRouter,
-  setsRouter
+  setsRouter,
+  cardsRouter
 };
