@@ -4,10 +4,6 @@ const getCardsBySetValidators = [
   param("idSet").isInt({ min: 1 }).withMessage("L'id du set doit être un entier positif"),
 ];
 
-const getCardByIdValidators = [
-  param("id").isInt({ min: 1 }).withMessage("L'id doit être un entier positif"),
-];
-
 const createCardValidators = [
   // Check that the number is not empty and an integer
   body("number")
@@ -42,24 +38,8 @@ const updateCardValidators = [
     .isInt({ min: 1 }).withMessage("L'id du set doit être un entier positif"),
 ];
 
-const deleteCardValidators = [
-  param("id").isInt({ min: 1 }).withMessage("L'id doit être un entier positif"),
-];
-
-const addCardToUserValidators = [
-  param("id").isInt({ min: 1 }).withMessage("L'id doit être un entier positif"),
-];
-
-const removeCardFromUserValidators = [
-  param("id").isInt({ min: 1 }).withMessage("L'id doit être un entier positif"),
-];
-
 module.exports = {
   getCardsBySetValidators,
-  getCardByIdValidators,
   createCardValidators,
-  updateCardValidators,
-  deleteCardValidators,
-  addCardToUserValidators,
-  removeCardFromUserValidators
+  updateCardValidators
 };

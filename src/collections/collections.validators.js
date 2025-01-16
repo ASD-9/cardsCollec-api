@@ -1,9 +1,5 @@
 const { body, param } = require("express-validator");
 
-const getCollectionByIdValidators = [
-  param("id").isInt({ min: 1 }).withMessage("L'id doit être un entier positif"),
-];
-
 const createCollectionValidators = [
   // Check that the name is not empty, a string and at least 3 characters long
   body("name")
@@ -24,13 +20,7 @@ const updateCollectionValidators = [
     .isLength({ min: 3 }).withMessage("Le nom de la collection doit avoir au moins 3 caractères"),
 ];
 
-const deleteCollectionValidators = [
-  param("id").isInt({ min: 1 }).withMessage("L'id doit être un entier positif"),
-];
-
 module.exports = {
-  getCollectionByIdValidators,
   createCollectionValidators,
-  updateCollectionValidators,
-  deleteCollectionValidators
+  updateCollectionValidators
 };
