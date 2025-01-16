@@ -4,10 +4,6 @@ const getRaritiesByCollectionValidators = [
   param("idCollection").isInt({ min: 1 }).withMessage("L'id doit être un entier positif"),
 ];
 
-const getRarityByIdValidators = [
-  param("id").isInt({ min: 1 }).withMessage("L'id doit être un entier positif"),
-];
-
 const createRarityValidators = [
   // Check that the name is not empty and a string
   body("name")
@@ -57,14 +53,8 @@ const updateRarityValidators = [
     .isInt({ min: 1 }).withMessage("L'id de la collection doit être un entier positif"),
 ];
 
-const deleteRarityValidators = [
-  param("id").isInt({ min: 1 }).withMessage("L'id doit être un entier positif"),
-];
-
 module.exports = {
   getRaritiesByCollectionValidators,
-  getRarityByIdValidators,
   createRarityValidators,
-  updateRarityValidators,
-  deleteRarityValidators
+  updateRarityValidators
 };

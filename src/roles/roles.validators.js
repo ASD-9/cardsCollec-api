@@ -1,9 +1,5 @@
 const { body, param } = require("express-validator");
 
-const getRoleByIdValidators = [
-  param("id").isInt({ min: 1 }).withMessage("L'id doit être un entier positif"),
-];
-
 const createRoleValidators = [
   // Check that the name is not empty, a string, and at least 3 characters long
   body("name")
@@ -23,13 +19,7 @@ const updateRoleValidators = [
     .isLength({ min: 3 }).withMessage("Le nom du rôle doit avoir au moins 3 caractères"),
 ];
 
-const deleteRoleValidators = [
-  param("id").isInt({ min: 1 }).withMessage("L'id doit être un entier positif"),
-];
-
 module.exports = {
-  getRoleByIdValidators,
   createRoleValidators,
-  updateRoleValidators,
-  deleteRoleValidators
+  updateRoleValidators
 };

@@ -1,9 +1,5 @@
 const { body, param } = require("express-validator");
 
-const getUserByIdValidators = [
-  param("id").isInt({ min: 1 }).withMessage("L'id doit être un entier positif"),
-];
-
 const createUserValidators = [
   // Check that the username is not empty, a string, and at least 3 characters long
   body("username")
@@ -39,13 +35,7 @@ const upateUserValidators = [
   body("id_avatar").optional().isInt({ min: 1 }).withMessage("L'id de l'avatar doit être un entier positif"),
 ];
 
-const deleteUserValidators = [
-  param("id").isInt({ min: 1 }).withMessage("L'id doit être un entier positif"),
-];
-
 module.exports = {
-  getUserByIdValidators,
   createUserValidators,
-  upateUserValidators,
-  deleteUserValidators
+  upateUserValidators
 };
