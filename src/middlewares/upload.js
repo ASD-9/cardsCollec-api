@@ -24,7 +24,7 @@ const handleImageUpload = (req, res, next) => {
     }
 
     // Add the image path to req.body to use it later to save it in the database
-    req.body.image_path = path.join("public/images", req.body.type, req.file.filename);
+    req.body.image_path = path.join("images", req.body.type, req.file.filename);
     delete req.body.type; // Remove the type from req.body to avoid sending it to the client
     next();
   });
