@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const authenticate = async (req, res, next) => {
   try {
     const authHeaders = req.headers.authorization;
-    if (!authHeaders || !authHeaders.startsWith("Bearer ")) {
+    if (!authHeaders?.startsWith("Bearer ")) {
       return responseHandler(res, 401, "Token manquant");
     }
 

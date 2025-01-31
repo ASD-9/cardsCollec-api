@@ -38,7 +38,6 @@ describe("authenticate middleware", () => {
 
   it("should return 401 if token is invalid", async () => {
     const mockError = new Error("Invalid token");
-    // jwt.verify.mockRejectedValue(mockError);
     jwt.verify.mockImplementation(() => {
       throw mockError;
     });
