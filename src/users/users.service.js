@@ -43,6 +43,30 @@ const getUserById = async (id) => {
   return rows.length > 0 ? formatUserData(rows[0]) : null;
 }
 
+const getUserByUsername = async (username) => {
+  const query = "SELECT id_user, password FROM Users WHERE username = ?";
+  const [rows] = await pool.execute(query, [username]);
+  return rows.length > 0 ? rows[0] : null;
+}
+
+const getUserRole = async (id) => {
+  const query = `
+    SELECT
+      r.*
+    FROM Users u
+    INNER JOIN Roles r ON u.id_role = r.id_role
+    WHERE u.id_user = ?
+  `;
+  const [rows] = await pool.execute(query, [id]);
+  return rows.length > 0 ? rows[0] : null;
+}
+
+const getUserRefreshToken = async (id) => {
+  const query = "SELECT refresh_token FROM Users WHERE id_user = ?";
+  const [rows] = await pool.execute(query, [id]);
+  return rows.length > 0 ? rows[0].refresh_token : null;
+}
+
 const createUser = async (userData) => {
   userData.password = await hashPassword(userData.password); // Hash the password before saving
   const query = `INSERT INTO Users (username, password, id_role, id_avatar) VALUES (?, ?, ?, ?)`;
@@ -75,6 +99,9 @@ const deleteUser = async (id) => {
 module.exports = {
   getUsers,
   getUserById,
+  getUserByUsername,
+  getUserRole,
+  getUserRefreshToken,
   createUser,
   updateUser,
   deleteUser

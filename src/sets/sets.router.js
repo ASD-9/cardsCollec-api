@@ -8,16 +8,18 @@ const { getSetsByCollectionValidators, createSetValidators, updateSetValidators 
 const handleValidations = require("../middlewares/handle.validations");
 const handleImageUpload = require("../middlewares/upload");
 
+const authorize = require("../middlewares/authorize");
+
 router.get("/", setsController.getSets);
 
 router.get("/:idCollection", getSetsByCollectionValidators, handleValidations, setsController.getSetsByCollection);
 
 router.get("/:id", idValidator, handleValidations, setsController.getSetById);
 
-router.post("/", handleImageUpload, createSetValidators, handleValidations, setsController.createSet);
+router.post("/", authorize("Admin"), handleImageUpload, createSetValidators, handleValidations, setsController.createSet);
 
-router.put("/:id", updateSetValidators, handleValidations, setsController.updateSet);
+router.put("/:id", authorize("Admin"), updateSetValidators, handleValidations, setsController.updateSet);
 
-router.delete("/:id", idValidator, handleValidations, setsController.deleteSet);
+router.delete("/:id", authorize("Admin"), idValidator, handleValidations, setsController.deleteSet);
 
 module.exports = router;

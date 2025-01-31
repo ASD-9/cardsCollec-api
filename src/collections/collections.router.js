@@ -8,14 +8,16 @@ const { createCollectionValidators, updateCollectionValidators } = require("./co
 const handleValidations = require("../middlewares/handle.validations");
 const handleImageUpload = require("../middlewares/upload");
 
+const authorize = require("../middlewares/authorize");
+
 router.get("/", collectionsController.getCollections);
 
 router.get("/:id", idValidator, handleValidations, collectionsController.getCollectionById);
 
-router.post("/", handleImageUpload, createCollectionValidators, handleValidations, collectionsController.createCollection);
+router.post("/", authorize("Admin"), handleImageUpload, createCollectionValidators, handleValidations, collectionsController.createCollection);
 
-router.put("/:id", updateCollectionValidators, handleValidations, collectionsController.updateCollection);
+router.put("/:id", authorize("Admin"), updateCollectionValidators, handleValidations, collectionsController.updateCollection);
 
-router.delete("/:id", idValidator, handleValidations, collectionsController.deleteCollection);
+router.delete("/:id", authorize("Admin"), idValidator, handleValidations, collectionsController.deleteCollection);
 
 module.exports = router;
