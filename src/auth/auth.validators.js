@@ -23,5 +23,6 @@ const refreshTokenValidators = [
 ];
 
 module.exports = {
-  loginValidators
+  loginValidators,
+  refreshTokenValidators
 };

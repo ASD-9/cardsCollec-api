@@ -4,7 +4,7 @@ const router = Router();
 const authController = require("./auth.controller");
 
 const { loginValidators, refreshTokenValidators } = require("./auth.validators");
-const { handleValidations } = require("../middlewares/handle.validations");
+const handleValidations = require("../middlewares/handle.validations");
 
 const authenticate = require("../middlewares/authenticate");
 
