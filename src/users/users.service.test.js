@@ -133,6 +133,98 @@ describe("Test Users Service", () => {
     });
   });
 
+  describe("getUserByUsername", () => {
+    it("shoud return an user based on the username", async () => {
+      const mockUser = {
+        id_user: 1,
+        password: "password",
+      };
+      pool.execute.mockResolvedValue([[mockUser]]);
+      
+      const user = await usersService.getUserByUsername("John Doe");
+      const query = "SELECT id_user, password FROM Users WHERE username = ?";
+
+      expect(pool.execute).toHaveBeenCalledWith(query, ["John Doe"]);
+      expect(user).toEqual(mockUser);
+    });
+
+    it("should return null if the user is not found", async () => {
+      pool.execute.mockResolvedValue([[]]);
+      
+      const user = await usersService.getUserByUsername("John Doe");
+      const query = "SELECT id_user, password FROM Users WHERE username = ?";
+
+      expect(pool.execute).toHaveBeenCalledWith(query, ["John Doe"]);
+      expect(user).toBeNull();
+    });
+  });
+
+  describe("getUserRole", () => {
+    it("should return the role of the user", async () => {
+      const mockRole = {
+        id_role: 1,
+        name: "Admin"
+      };
+      pool.execute.mockResolvedValue([[mockRole]]);
+      
+      const role = await usersService.getUserRole(1);
+      const query = `
+    SELECT
+      r.*
+    FROM Users u
+    INNER JOIN Roles r ON u.id_role = r.id_role
+    WHERE u.id_user = ?
+  `;
+
+      expect(pool.execute).toHaveBeenCalledWith(query, [1]);
+      expect(role).toEqual({
+        "id_role": 1,
+        "name": "Admin"
+      });
+    });
+
+    it("should return null if the user is not found", async () => {
+      pool.execute.mockResolvedValue([[]]);
+      
+      const role = await usersService.getUserRole(99);
+      const query = `
+    SELECT
+      r.*
+    FROM Users u
+    INNER JOIN Roles r ON u.id_role = r.id_role
+    WHERE u.id_user = ?
+  `;
+
+      expect(pool.execute).toHaveBeenCalledWith(query, [99]);
+      expect(role).toBeNull();
+    });
+  });
+
+  describe("getUserRefreshToken", () => {
+    it("should return the refreshToken of the user", async () => {
+      const mockToken = {
+        refresh_token: "refresh_token"
+      };
+      pool.execute.mockResolvedValue([[mockToken]]);
+      
+      const refreshToken = await usersService.getUserRefreshToken(1);
+      const query = "SELECT refresh_token FROM Users WHERE id_user = ?";
+
+      expect(pool.execute).toHaveBeenCalledWith(query, [1]);
+      expect(refreshToken).toEqual("refresh_token");
+    });
+
+    it("should return null if the user is not found", async () => {
+      pool.execute.mockResolvedValue([[]]);
+      
+      const refreshToken = await usersService.getUserRefreshToken(99);
+      const query = "SELECT refresh_token FROM Users WHERE id_user = ?";
+
+      expect(pool.execute).toHaveBeenCalledWith(query, [99]);
+      expect(refreshToken).toBeNull();
+    });
+  });
+
   describe("createUser", () => {
     it("should create a user and return the created user with hashed password", async () => {
       const userData = {

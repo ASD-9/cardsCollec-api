@@ -8,17 +8,19 @@ const { getCardsBySetValidators, createCardValidators, updateCardValidators } = 
 const handleValidations = require("../middlewares/handle.validations");
 const handleImageUpload = require("../middlewares/upload");
 
+const authorize = require("../middlewares/authorize");
+
 router.get("/", cardsController.getCards);
 
 router.get("/:idSet", getCardsBySetValidators, handleValidations, cardsController.getCardsBySet);
 
 router.get("/:id", idValidator, handleValidations, cardsController.getCardById);
 
-router.post("/", handleImageUpload, createCardValidators, handleValidations, cardsController.createCard);
+router.post("/", authorize("Admin"), handleImageUpload, createCardValidators, handleValidations, cardsController.createCard);
 
-router.put("/:id", updateCardValidators, handleValidations, cardsController.updateCard);
+router.put("/:id", authorize("Admin"), updateCardValidators, handleValidations, cardsController.updateCard);
 
-router.delete("/:id", idValidator, handleValidations, cardsController.deleteCard);
+router.delete("/:id", authorize("Admin"), idValidator, handleValidations, cardsController.deleteCard);
 
 router.post("/add-to-user/:id", idValidator, handleValidations, cardsController.addCardToUser);
 

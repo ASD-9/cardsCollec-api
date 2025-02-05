@@ -35,7 +35,7 @@ describe("Test upload middleware", () => {
 
     expect(next).toHaveBeenCalled();
     expect(upload.single).toHaveBeenCalledWith("image");
-    expect(req.body.image_path).toEqual(path.join("public/images", "collections", req.file.filename));
+    expect(req.body.image_path).toEqual(path.join("images", "collections", req.file.filename));
   });
 
   it("should call responseHandler with error 400 if no image is uploaded", () => {

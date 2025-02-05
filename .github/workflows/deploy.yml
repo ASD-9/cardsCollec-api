@@ -36,3 +36,4 @@ jobs:
             cd cardsCollec-env/
             docker compose pull node
             docker compose up -d node
+            docker image prune -f
