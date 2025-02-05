@@ -50,8 +50,9 @@ const refreshToken = async (req, res) => {
 
 const logout = async (req, res) => {
   try {
-    const user = req.user;
-    await usersService.updateUser(user.id_user, { refresh_token: null });
+    const { refreshToken } = req.body;
+    const decoded = jwt.decode(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    await usersService.updateUser(decoded.id_user, { refresh_token: null });
     return responseHandler(res, 200, "Déconnexion réussie");
   } catch (error) {
     return responseHandler(res, 500, "Une erreur est survenue lors de la déconnexion", null, error);

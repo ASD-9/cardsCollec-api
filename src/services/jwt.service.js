@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+
 const generateAccessToken = (idUser) => {
   const payload = {
     id_user: idUser

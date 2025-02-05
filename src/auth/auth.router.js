@@ -12,7 +12,7 @@ router.post("/login", loginValidators, handleValidations, authController.login);
 
 router.post("/refresh-token", refreshTokenValidators, handleValidations, authController.refreshToken);
 
-router.post("/logout", authenticate, authController.logout);
+router.post("/logout", authController.logout);
 
 router.get("/profile", authenticate, authController.getProfile);
 
