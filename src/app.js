@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const routes = require("./routes");
 const authenticate = require("./middlewares/authenticate");
 const authorize = require("./middlewares/authorize");
@@ -8,11 +9,13 @@ const app = express();
 // Disabling the “X-Powered-By” header for security reasons
 app.disable("x-powered-by");
 
+app.use(cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Static files
-app.use('/images', express.static('public/images'));
+app.use("/images", express.static("public/images"));
 
 // Routes
 app.use("/auth", routes.authRouter);
