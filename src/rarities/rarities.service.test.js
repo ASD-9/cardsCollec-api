@@ -45,7 +45,9 @@ describe("Test Rarities Service", () => {
       const mockRarities = [mockRarity, mockRarity2];
       pool.execute.mockResolvedValue([mockRarities]);
 
-      const rarities = await raritiesService.getRaritiesByCollection(idCollection);
+      const rarities = await raritiesService.getRaritiesByCollection(
+        idCollection
+      );
       const query = "SELECT * FROM Rarities WHERE id_collection = ?";
 
       expect(pool.execute).toHaveBeenCalledWith(query, [idCollection]);
@@ -87,7 +89,8 @@ describe("Test Rarities Service", () => {
       pool.execute.mockResolvedValue([mockResult]);
 
       const createdRarity = await raritiesService.createRarity(rarityData);
-      const query = "INSERT INTO Rarities (name, abbreviated_name, rank, id_collection) VALUES (?, ?, ?, ?)";
+      const query =
+        "INSERT INTO Rarities (name, abbreviated_name, `rank`, id_collection) VALUES (?, ?, ?, ?)";
 
       expect(pool.execute).toHaveBeenCalledWith(query, ["Common", "C", 1, 1]);
       expect(createdRarity).toEqual(mockRarity);
@@ -106,7 +109,8 @@ describe("Test Rarities Service", () => {
         .mockResolvedValueOnce([[mockRarity]]); // Mock the return value for the second query (getRarityById)
 
       const updatedRarity = await raritiesService.updateRarity(1, rarityData);
-      const query = "UPDATE Rarities SET name = ?, abbreviated_name = ? WHERE id_rarity = ?";
+      const query =
+        "UPDATE Rarities SET name = ?, abbreviated_name = ? WHERE id_rarity = ?";
 
       expect(pool.execute).toHaveBeenCalledWith(query, ["Common", "C", 1]);
       expect(updatedRarity).toEqual(mockRarity);
@@ -121,7 +125,8 @@ describe("Test Rarities Service", () => {
       pool.execute.mockResolvedValue([mockResult]);
 
       const updatedRarity = await raritiesService.updateRarity(99, rarityData);
-      const query = "UPDATE Rarities SET name = ?, abbreviated_name = ? WHERE id_rarity = ?";
+      const query =
+        "UPDATE Rarities SET name = ?, abbreviated_name = ? WHERE id_rarity = ?";
 
       expect(pool.execute).toHaveBeenCalledWith(query, ["Common", "C", 99]);
       expect(updatedRarity).toBeNull();
